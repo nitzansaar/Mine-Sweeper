@@ -17,6 +17,7 @@ public class MineField {
    private static Random random = new Random();
    private MineField mineField;
    private boolean[][] mineData;
+   private int numMines = 0;
    
    /**
       Create a minefield with same dimensions as the given array, and populate it with the mines in
@@ -27,19 +28,8 @@ public class MineField {
                        and must be rectangular (i.e., every row is the same length)
     */
    public MineField(boolean[][] mineData) {
-      for (int i = 0; i < mineData.length; i++) {
-         for (int j = 0; j < mineData.length; j++) {
-            // randomly choose if there is a mine or not
-            // 1 in 3 chance of there being a mine
-            int randomInt = random.nextInt(3);
-            if (randomInt == 1) {
-               mineData[i][j] = true;
-            } else {
-               mineData[i][j] = false;
-            }
-         }
-      }
       this.mineData = mineData;
+      
    }
 
 
@@ -55,7 +45,14 @@ public class MineField {
       PRE: numRows > 0 and numCols > 0 and 0 <= numMines < (1/3 of total number of field locations). 
     */
    public MineField(int numRows, int numCols, int numMines) {
-      
+      boolean[][] field = new boolean[numRows][numCols];
+      for (int i = 0; i < numRows; i++) {
+         for (int j = 0; j < numCols; j++) {
+            field[i][j] = false;
+         }
+      }
+      this.numMines = numMines;
+      this.mineData = field;
    }
    
 
@@ -67,7 +64,20 @@ public class MineField {
       PRE: inRange(row, col) and numMines() < (1/3 * numRows() * numCols())
     */
    public void populateMineField(int row, int col) {
-      
+      resetEmpty();
+      // repopulate the mine fields
+      for (int i = 0; i < row; i++) {
+         for (int j = 0; j < col; j++) {
+            while (this.numMines > 0) {
+               int randX = random.nextInt(numRows());
+               int randY = random.nextInt(numCols());
+               if (!this.mineData[randX][randY] && !(randX == row && randY == col)) {
+                  this.mineData[randX][randY] = true;
+                  this.numMines--;
+               }
+            }
+         }
+      }
    }
    
    
@@ -79,7 +89,12 @@ public class MineField {
       beginning of a game.
     */
    public void resetEmpty() {
-      
+      // remove the mines from the mine field
+      for (int i = 0; i < numRows(); i++) {
+         for (int j = 0; j < numCols(); j++) {
+            this.mineData[i][j] = false;
+         }
+      }
    }
 
    
@@ -93,6 +108,7 @@ public class MineField {
      PRE: inRange(row, col)
    */
    public int numAdjacentMines(int row, int col) {
+
       return 0;       // DUMMY CODE so skeleton compiles
    }
    
@@ -105,6 +121,7 @@ public class MineField {
       @return whether (row, col) is a valid field location
    */
    public boolean inRange(int row, int col) {
+
       return false;       // DUMMY CODE so skeleton compiles
    }
    
@@ -114,7 +131,7 @@ public class MineField {
       @return number of rows in the field
    */  
    public int numRows() {
-      return 0;       // DUMMY CODE so skeleton compiles
+      return this.mineData.length;
    }
    
    
@@ -123,7 +140,7 @@ public class MineField {
       @return number of columns in the field
    */    
    public int numCols() {
-      return 0;       // DUMMY CODE so skeleton compiles
+      return this.mineData[0].length;    
    }
    
    
@@ -135,7 +152,10 @@ public class MineField {
       PRE: inRange(row, col)   
    */    
    public boolean hasMine(int row, int col) {
-      return false;       // DUMMY CODE so skeleton compiles
+      if (mineData[row][col] == true) {
+         return true;
+      }
+      return false;  
    }
    
    
@@ -147,7 +167,7 @@ public class MineField {
       @return number of mines
     */
    public int numMines() {
-      return 0;       // DUMMY CODE so skeleton compiles
+      return this.numMines;
    }
 
    
