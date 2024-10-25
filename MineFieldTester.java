@@ -7,7 +7,19 @@ public class MineFieldTester {
         // System.out.println(mineField.numMines());
         // mineField.populateMineField(1, 1);
         // System.out.println(mineField.toString());
-        testPopulateMineField();
+        // testPopulateMineField();
+        testNumAdjacentMines(mineField);
+    }
+
+    private static void testNumAdjacentMines(MineField mineField) {
+        mineField = new MineField(10, 10, 50);
+        mineField.populateMineField(1,1);
+        System.out.println(mineField.toString());
+        // int res = mineField.countAdjacentMinesFromMiddle(1, 1);
+        int res = mineField.numAdjacentMines(1, 1);
+        System.out.println(res);
+
+        
     }
 
     private static void testPopulateMineField() {
@@ -31,4 +43,6 @@ public class MineFieldTester {
         }
         return mineCount == mineField.numMines();
     }
+
+
 }

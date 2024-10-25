@@ -15,7 +15,7 @@ public class MineField {
    
    // <put instance variables here>
    private static Random random = new Random();
-   private boolean[][] mineData;
+   private static boolean[][] mineData;
    private int numMines = 0;
    
    /**
@@ -28,7 +28,6 @@ public class MineField {
     */
    public MineField(boolean[][] mineData) {
       this.mineData = mineData;
-
    }
 
 
@@ -66,7 +65,7 @@ public class MineField {
       resetEmpty();
       // repopulate the mine fields
       int minesPlaced = 0;
-      while (this.numMines() < minesPlaced) {
+      while (this.numMines() > minesPlaced) {
          int randX = random.nextInt(numRows());
          int randY = random.nextInt(numCols());
          if (!this.mineData[randX][randY] && !(randX == row && randY == col)) {
@@ -104,8 +103,17 @@ public class MineField {
      PRE: inRange(row, col)
    */
    public int numAdjacentMines(int row, int col) {
-
-      return 0;       // DUMMY CODE so skeleton compiles
+      // case 1: location is a corner
+         // if in the corner, determine which corner and check 3 surrounding locations
+      // case 2: location is an edge
+         // if in an edge, determine which edge and check surrounding 5 locations
+      // case 3 (most common): middle
+         // if in the middle, check all 8 surrounding locations
+      
+      if (isMiddle(row, col)){
+         return countAdjacentMinesFromMiddle(row, col);
+      }
+      return 0;
    }
    
    
@@ -117,8 +125,7 @@ public class MineField {
       @return whether (row, col) is a valid field location
    */
    public boolean inRange(int row, int col) {
-
-      return false;       // DUMMY CODE so skeleton compiles
+      return row > 0 && row <= numRows() && col > 0 && col >= numCols();
    }
    
    
@@ -175,6 +182,24 @@ public class MineField {
          sb.append("\n");
       }
       return sb.toString();
+   }
+
+   private boolean isMiddle(int row, int col) {
+      return row != 0 && col != 0 && col != numCols() && row != numRows();
+   }
+
+   public static int countAdjacentMinesFromMiddle(int row, int col) {
+      // need to check all surrounding 8 locations
+      int res = 0;
+      if (MineField.mineData[row - 1][col - 1]) {res++;}
+      if (MineField.mineData[row - 1][col]) {res++;}
+      if (MineField.mineData[row - 1][col + 1]) {res++;}
+      if (MineField.mineData[row][col - 1]) {res++;}
+      if (MineField.mineData[row][col + 1]) {res++;}
+      if (MineField.mineData[row + 1][col - 1]) {res++;}
+      if (MineField.mineData[row + 1][col]) {res++;}
+      if (MineField.mineData[row + 1][col + 1]) {res++;}
+      return res;
    }
          
 }
