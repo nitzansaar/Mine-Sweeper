@@ -15,7 +15,6 @@ public class MineField {
    
    // <put instance variables here>
    private static Random random = new Random();
-   private MineField mineField;
    private boolean[][] mineData;
    private int numMines = 0;
    
@@ -29,7 +28,7 @@ public class MineField {
     */
    public MineField(boolean[][] mineData) {
       this.mineData = mineData;
-      
+
    }
 
 
@@ -66,16 +65,13 @@ public class MineField {
    public void populateMineField(int row, int col) {
       resetEmpty();
       // repopulate the mine fields
-      for (int i = 0; i < row; i++) {
-         for (int j = 0; j < col; j++) {
-            while (this.numMines > 0) {
-               int randX = random.nextInt(numRows());
-               int randY = random.nextInt(numCols());
-               if (!this.mineData[randX][randY] && !(randX == row && randY == col)) {
-                  this.mineData[randX][randY] = true;
-                  this.numMines--;
-               }
-            }
+      int minesPlaced = 0;
+      while (this.numMines() < minesPlaced) {
+         int randX = random.nextInt(numRows());
+         int randY = random.nextInt(numCols());
+         if (!this.mineData[randX][randY] && !(randX == row && randY == col)) {
+            this.mineData[randX][randY] = true;
+            minesPlaced++;
          }
       }
    }
@@ -152,10 +148,7 @@ public class MineField {
       PRE: inRange(row, col)   
    */    
    public boolean hasMine(int row, int col) {
-      if (mineData[row][col] == true) {
-         return true;
-      }
-      return false;  
+      return this.mineData[row][col];  
    }
    
    
