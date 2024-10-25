@@ -109,11 +109,15 @@ public class MineField {
          // if in an edge, determine which edge and check surrounding 5 locations
       // case 3 (most common): middle
          // if in the middle, check all 8 surrounding locations
-      
-      if (isMiddle(row, col)){
-         return countAdjacentMinesFromMiddle(row, col);
+      int res;
+      if (isCorner(row, col)) {
+         res = countAdjacentMinesFromCorner(row, col);
+      } else if (isEdge(row, col)) {
+         res = countAdjacentMinesFromEdge(row, col);
+      } else if (isMiddle(row, col)){
+         res = countAdjacentMinesFromMiddle(row, col);
       }
-      return 0;
+      return res;
    }
    
    
@@ -133,8 +137,8 @@ public class MineField {
       Returns the number of rows in the field.
       @return number of rows in the field
    */  
-   public int numRows() {
-      return this.mineData.length;
+   public static int numRows() {
+      return MineField.mineData.length;
    }
    
    
@@ -142,8 +146,8 @@ public class MineField {
       Returns the number of columns in the field.
       @return number of columns in the field
    */    
-   public int numCols() {
-      return this.mineData[0].length;    
+   public static int numCols() {
+      return MineField.mineData[0].length;    
    }
    
    
@@ -182,6 +186,46 @@ public class MineField {
          sb.append("\n");
       }
       return sb.toString();
+   }
+
+   private boolean isEdge(int row, int col) {
+      return !isCorner(row, col) && !isMiddle(row, col);
+   }
+
+   private int countAdjacentMinesFromEdge(int row, int col) {
+      
+      return 0;
+   }
+
+   private boolean isCorner(int row, int col) {
+      return (row == 0 && col == 0) 
+      || (row == 0 && col == numCols()) 
+      || (row == numRows() && col == 0)
+      || (row == numRows() && col == numCols());
+   }
+
+   private static int countAdjacentMinesFromCorner(int row, int col) {
+      int res = 0;
+      if (row == 0 && col == 0) { // top left corner
+         if (MineField.mineData[row][col + 1]) {res++;}
+         if (MineField.mineData[row + 1][col + 1]) {res++;}
+         if (MineField.mineData[row + 1][col]) {res++;}
+      } else if (row == 0 && col == numCols()) { // top right corner
+         if (MineField.mineData[row][col - 1]) {res++;}
+         if (MineField.mineData[row + 1][col - 1]) {res++;}
+         if (MineField.mineData[row + 1][col]) {res++;}
+      } else if (row == numRows() && col == 0) { // bottom left corner
+         if (MineField.mineData[row - 1][col]) {res++;}
+         if (MineField.mineData[row - 1][col + 1]) {res++;}
+         if (MineField.mineData[row][col + 1]) {res++;}
+      } else if (row == numRows() && col == numCols()) { // bottom right corner
+         if (MineField.mineData[row][col - 1]) {res++;}
+         if (MineField.mineData[row - 1][col - 1]) {res++;}
+         if (MineField.mineData[row - 1][col]) {res++;}
+      } else {
+         System.out.println("This is not a corner piece!!!");
+      }
+      return res;
    }
 
    private boolean isMiddle(int row, int col) {
