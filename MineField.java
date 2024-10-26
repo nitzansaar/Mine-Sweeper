@@ -15,7 +15,7 @@ public class MineField {
    
    // <put instance variables here>
    private static Random random = new Random();
-   private static boolean[][] mineData;
+   private boolean[][] mineData;
    private int numMines = 0;
    
    /**
@@ -109,7 +109,7 @@ public class MineField {
          // if in an edge, determine which edge and check surrounding 5 locations
       // case 3 (most common): middle
          // if in the middle, check all 8 surrounding locations
-      int res;
+      int res = 0;
       if (isCorner(row, col)) {
          res = countAdjacentMinesFromCorner(row, col);
       } else if (isEdge(row, col)) {
@@ -129,7 +129,7 @@ public class MineField {
       @return whether (row, col) is a valid field location
    */
    public boolean inRange(int row, int col) {
-      return row > 0 && row <= numRows() && col > 0 && col >= numCols();
+      return row >= 0 && row < numRows() && col >= 0 && col < numCols();
    }
    
    
@@ -137,8 +137,8 @@ public class MineField {
       Returns the number of rows in the field.
       @return number of rows in the field
    */  
-   public static int numRows() {
-      return MineField.mineData.length;
+   public int numRows() {
+      return this.mineData.length;
    }
    
    
@@ -146,8 +146,8 @@ public class MineField {
       Returns the number of columns in the field.
       @return number of columns in the field
    */    
-   public static int numCols() {
-      return MineField.mineData[0].length;    
+   public int numCols() {
+      return this.mineData[0].length;    
    }
    
    
@@ -193,35 +193,62 @@ public class MineField {
    }
 
    private int countAdjacentMinesFromEdge(int row, int col) {
-      
-      return 0;
+      int res = 0;
+      if (row == 0) {
+         if (this.mineData[row][col + 1]) {res++;}
+         if (this.mineData[row][col - 1]) {res++;}
+         if (this.mineData[row + 1][col + 1]) {res++;}
+         if (this.mineData[row + 1][col - 1]) {res++;}
+         if (this.mineData[row + 1][col]) {res++;}
+      } else if (col == 0) {
+         if (this.mineData[row - 1][col]) {res++;}
+         if (this.mineData[row - 1][col + 1]) {res++;}
+         if (this.mineData[row][col + 1]) {res++;}
+         if (this.mineData[row + 1][col + 1]) {res++;}
+         if (this.mineData[row + 1][col]) {res++;}
+      } else if (row == numRows() - 1) {
+         if (this.mineData[row][col + 1]) {res++;}
+         if (this.mineData[row][col - 1]) {res++;}
+         if (this.mineData[row - 1][col - 1]) {res++;}
+         if (this.mineData[row - 1][col + 1]) {res++;}
+         if (this.mineData[row - 1][col]) {res++;}
+      } else if (col == numCols() - 1) {
+         if (this.mineData[row - 1][col]) {res++;}
+         if (this.mineData[row - 1][col - 1]) {res++;}
+         if (this.mineData[row][col - 1]) {res++;}
+         if (this.mineData[row + 1][col - 1]) {res++;}
+         if (this.mineData[row + 1][col]) {res++;}
+      } else {
+         System.out.println("This is not a edge piece!!!");
+      }
+      return res;
    }
 
    private boolean isCorner(int row, int col) {
       return (row == 0 && col == 0) 
-      || (row == 0 && col == numCols()) 
-      || (row == numRows() && col == 0)
-      || (row == numRows() && col == numCols());
+      || (row == 0 && col == numCols() - 1) 
+      || (row == numRows() - 1 && col == 0)
+      || (row == numRows() - 1 && col == numCols() - 1);
    }
 
-   private static int countAdjacentMinesFromCorner(int row, int col) {
+   private int countAdjacentMinesFromCorner(int row, int col) {
       int res = 0;
       if (row == 0 && col == 0) { // top left corner
-         if (MineField.mineData[row][col + 1]) {res++;}
-         if (MineField.mineData[row + 1][col + 1]) {res++;}
-         if (MineField.mineData[row + 1][col]) {res++;}
-      } else if (row == 0 && col == numCols()) { // top right corner
-         if (MineField.mineData[row][col - 1]) {res++;}
-         if (MineField.mineData[row + 1][col - 1]) {res++;}
-         if (MineField.mineData[row + 1][col]) {res++;}
-      } else if (row == numRows() && col == 0) { // bottom left corner
-         if (MineField.mineData[row - 1][col]) {res++;}
-         if (MineField.mineData[row - 1][col + 1]) {res++;}
-         if (MineField.mineData[row][col + 1]) {res++;}
-      } else if (row == numRows() && col == numCols()) { // bottom right corner
-         if (MineField.mineData[row][col - 1]) {res++;}
-         if (MineField.mineData[row - 1][col - 1]) {res++;}
-         if (MineField.mineData[row - 1][col]) {res++;}
+         if (this.mineData[row][col + 1]) {res++;}
+         if (this.mineData[row + 1][col + 1]) {res++;}
+         if (this.mineData[row + 1][col]) {res++;}
+      } else if (row == 0 && col == numCols() - 1) { // top right corner
+         if (this.mineData[row][col - 1]) {res++;}
+         if (this.mineData[row + 1][col - 1]) {res++;}
+         if (this.mineData[row + 1][col]) {res++;}
+      } else if (row == numRows() - 1 && col == 0) { // bottom left corner
+         if (this.mineData[row - 1][col]) {res++;}
+         if (this.mineData[row - 1][col + 1]) {res++;}
+         if (this.mineData[row][col + 1]) {res++;}
+      } else if (row == numRows() - 1 && col == numCols() - 1) { // bottom right corner
+         if (this.mineData[row][col - 1]) {res++;}
+         if (this.mineData[row - 1][col - 1]) {res++;}
+         if (this.mineData[row - 1][col]) {res++;}
       } else {
          System.out.println("This is not a corner piece!!!");
       }
@@ -229,20 +256,20 @@ public class MineField {
    }
 
    private boolean isMiddle(int row, int col) {
-      return row != 0 && col != 0 && col != numCols() && row != numRows();
+      return row != 0 && col != 0 && col != numCols() - 1 && row != numRows() - 1;
    }
 
-   public static int countAdjacentMinesFromMiddle(int row, int col) {
+   private int countAdjacentMinesFromMiddle(int row, int col) {
       // need to check all surrounding 8 locations
       int res = 0;
-      if (MineField.mineData[row - 1][col - 1]) {res++;}
-      if (MineField.mineData[row - 1][col]) {res++;}
-      if (MineField.mineData[row - 1][col + 1]) {res++;}
-      if (MineField.mineData[row][col - 1]) {res++;}
-      if (MineField.mineData[row][col + 1]) {res++;}
-      if (MineField.mineData[row + 1][col - 1]) {res++;}
-      if (MineField.mineData[row + 1][col]) {res++;}
-      if (MineField.mineData[row + 1][col + 1]) {res++;}
+      if (this.mineData[row - 1][col - 1]) {res++;}
+      if (this.mineData[row - 1][col]) {res++;}
+      if (this.mineData[row - 1][col + 1]) {res++;}
+      if (this.mineData[row][col - 1]) {res++;}
+      if (this.mineData[row][col + 1]) {res++;}
+      if (this.mineData[row + 1][col - 1]) {res++;}
+      if (this.mineData[row + 1][col]) {res++;}
+      if (this.mineData[row + 1][col + 1]) {res++;}
       return res;
    }
          

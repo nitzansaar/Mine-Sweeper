@@ -2,12 +2,7 @@ public class MineFieldTester {
 
     public static MineField mineField;
     public static void main(String[] args) {
-        // MineField mineField = new MineField(10, 10, 3);
-        // System.out.println(mineField.toString());
-        // System.out.println(mineField.numMines());
-        // mineField.populateMineField(1, 1);
-        // System.out.println(mineField.toString());
-        // testPopulateMineField();
+
         testNumAdjacentMines(mineField);
     }
 
@@ -16,7 +11,7 @@ public class MineFieldTester {
         mineField.populateMineField(0,0);
         System.out.println(mineField.toString());
         // int res = mineField.countAdjacentMinesFromMiddle(1, 1);
-        int res = mineField.numAdjacentMines(0, 0);
+        int res = mineField.numAdjacentMines(1, 9);
         System.out.println(res);
     }
 
