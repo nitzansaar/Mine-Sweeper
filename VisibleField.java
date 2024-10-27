@@ -128,19 +128,17 @@ public class VisibleField {
    public void cycleGuess(int row, int col) {
       int guess = fieldStatus[row][col];
        switch (guess) {
-           case COVERED:
+           case COVERED -> {
                fieldStatus[row][col] = MINE_GUESS;
                minesLeft--;
-               break;
-           case MINE_GUESS:
+           }
+           case MINE_GUESS -> {
                fieldStatus[row][col] = QUESTION;
                minesLeft++;
-               break;
-           case QUESTION:
-               fieldStatus[row][col] = COVERED;
-               break;
-           default:
-               break;
+           }
+           case QUESTION -> fieldStatus[row][col] = COVERED;
+           default -> {
+           }
        }
       checkWin();
       
@@ -163,19 +161,43 @@ public class VisibleField {
     */
    public boolean uncover(int row, int col) {
       if (mineField.hasMine(row, col)) {
-         gameOver = true;
+         handleLoss();
          fieldStatus[row][col] = EXPLODED_MINE;
          return false;
       }
 
       uncoverRecursive(row, col);
       if (checkWin()) {
-         gameOver = true;
+         handleWin();
       }
 
       return true;
    }
-
+   
+   /**
+      Returns whether the game is over.
+      (Note: This is not a mutator.)
+      @return whether game has ended
+    */
+   public boolean isGameOver() {
+      return gameOver;  
+   }
+ 
+   
+   /**
+      Returns whether this square has been uncovered.  (i.e., is in any one of the uncovered states, 
+      vs. any one of the covered states).
+      @param row of the square
+      @param col of the square
+      @return whether the square is uncovered
+      PRE: getMineField().inRange(row, col)
+    */
+   public boolean isUncovered(int row, int col) {
+      return fieldStatus[row][col] >= 0;
+   }
+   
+ 
+   // <put private methods here>
    private void uncoverRecursive(int row, int col) {
       if (!mineField.inRange(row, col)  || isUncovered(row, col) || fieldStatus[row][col] == MINE_GUESS) {
          return;
@@ -204,31 +226,25 @@ public class VisibleField {
       }
       return true;
    }
- 
-   
-   /**
-      Returns whether the game is over.
-      (Note: This is not a mutator.)
-      @return whether game has ended
-    */
-   public boolean isGameOver() {
-      return gameOver;  
+
+   private void  handleWin() {
+      gameOver = true;
+   }
+
+   private void handleLoss() {
+      gameOver = true;
+      for (int i = 0; i < mineField.numRows(); i++) {
+         for (int j = 0; j < mineField.numCols(); j++) {
+            if (mineField.hasMine(i, j)) {
+               if (fieldStatus[i][j] != MINE_GUESS) {
+                  fieldStatus[i][j] = MINE;
+               } else if (fieldStatus[i][j] == MINE_GUESS) {
+                  fieldStatus[i][j] = INCORRECT_GUESS;
+               }
+
+            }
+         }
+      }
    }
  
-   
-   /**
-      Returns whether this square has been uncovered.  (i.e., is in any one of the uncovered states, 
-      vs. any one of the covered states).
-      @param row of the square
-      @param col of the square
-      @return whether the square is uncovered
-      PRE: getMineField().inRange(row, col)
-    */
-   public boolean isUncovered(int row, int col) {
-      return fieldStatus[row][col] >= 0;
-   }
-   
- 
-   // <put private methods here>
-   
 }
