@@ -1,5 +1,6 @@
 import java.util.Random;
-// USC NetID:
+// Name: Nitzan Saar
+// USC NetID: 8106373693
 // CS 455 PA3
 // Fall 2024
 
@@ -16,7 +17,7 @@ public class MineField {
    // <put instance variables here>
    private static Random random = new Random();
    private boolean[][] mineData;
-   private int numMines = 0;
+   private int numMines;
    
    /**
       Create a minefield with same dimensions as the given array, and populate it with the mines in
@@ -103,22 +104,9 @@ public class MineField {
      PRE: inRange(row, col)
    */
    public int numAdjacentMines(int row, int col) {
-      // case 1: location is a corner
-         // if in the corner, determine which corner and check 3 surrounding locations
-      // case 2: location is an edge
-         // if in an edge, determine which edge and check surrounding 5 locations
-      // case 3 (most common): middle
-         // if in the middle, check all 8 surrounding locations
-      int res = 0;
-      if (isCorner(row, col)) {
-         res = countAdjacentMinesFromCorner(row, col);
-      } else if (isEdge(row, col)) {
-         res = countAdjacentMinesFromEdge(row, col);
-      } else if (isMiddle(row, col)){
-         res = countAdjacentMinesFromMiddle(row, col);
-      }
-      return res;
-   }
+      return numAdjacentMinesHelper(row, col, new boolean[numRows()][numCols()]);
+  }
+  
    
    
    /**
@@ -174,104 +162,45 @@ public class MineField {
       return this.numMines;
    }
 
-   
-   // <put private methods here>
    @Override
    public String toString() {
       StringBuilder sb = new StringBuilder();
-      for (int i = 0; i < mineData.length; i++) {
-         for (int j = 0; j < mineData[i].length; j++) {
-            sb.append(mineData[i][j] ? "*" : ".");
-         }
-         sb.append("\n");
-      }
+       for (boolean[] mineData1 : mineData) {
+           for (int j = 0; j < mineData1.length; j++) {
+               sb.append(mineData1[j] ? "*" : ".");
+           }
+           sb.append("\n");
+       }
       return sb.toString();
    }
 
-   private boolean isEdge(int row, int col) {
-      return !isCorner(row, col) && !isMiddle(row, col);
+   
+   // <put private methods here>
+  // Helper method with a visited array to avoid re-visiting cells
+  private int numAdjacentMinesHelper(int row, int col, boolean[][] visited) {
+   if (!inRange(row, col) || visited[row][col]) {
+       return 0;
    }
 
-   private int countAdjacentMinesFromEdge(int row, int col) {
-      int res = 0;
-      if (row == 0) {
-         if (this.mineData[row][col + 1]) {res++;}
-         if (this.mineData[row][col - 1]) {res++;}
-         if (this.mineData[row + 1][col + 1]) {res++;}
-         if (this.mineData[row + 1][col - 1]) {res++;}
-         if (this.mineData[row + 1][col]) {res++;}
-      } else if (col == 0) {
-         if (this.mineData[row - 1][col]) {res++;}
-         if (this.mineData[row - 1][col + 1]) {res++;}
-         if (this.mineData[row][col + 1]) {res++;}
-         if (this.mineData[row + 1][col + 1]) {res++;}
-         if (this.mineData[row + 1][col]) {res++;}
-      } else if (row == numRows() - 1) {
-         if (this.mineData[row][col + 1]) {res++;}
-         if (this.mineData[row][col - 1]) {res++;}
-         if (this.mineData[row - 1][col - 1]) {res++;}
-         if (this.mineData[row - 1][col + 1]) {res++;}
-         if (this.mineData[row - 1][col]) {res++;}
-      } else if (col == numCols() - 1) {
-         if (this.mineData[row - 1][col]) {res++;}
-         if (this.mineData[row - 1][col - 1]) {res++;}
-         if (this.mineData[row][col - 1]) {res++;}
-         if (this.mineData[row + 1][col - 1]) {res++;}
-         if (this.mineData[row + 1][col]) {res++;}
-      } else {
-         System.out.println("This is not a edge piece!!!");
-      }
-      return res;
+   // Mark this cell as visited
+   visited[row][col] = true;
+   int mineCount = 0;
+
+   // Check all adjacent cells
+   for (int i = -1; i <= 1; i++) {
+       for (int j = -1; j <= 1; j++) {
+           if (i == 0 && j == 0) continue;  // Skip the current cell
+           int newRow = row + i;
+           int newCol = col + j;
+           if (inRange(newRow, newCol) && hasMine(newRow, newCol)) {
+               mineCount++;
+           }
+       }
    }
 
-   private boolean isCorner(int row, int col) {
-      return (row == 0 && col == 0) 
-      || (row == 0 && col == numCols() - 1) 
-      || (row == numRows() - 1 && col == 0)
-      || (row == numRows() - 1 && col == numCols() - 1);
-   }
+   return mineCount;
+}
 
-   private int countAdjacentMinesFromCorner(int row, int col) {
-      int res = 0;
-      if (row == 0 && col == 0) { // top left corner
-         if (this.mineData[row][col + 1]) {res++;}
-         if (this.mineData[row + 1][col + 1]) {res++;}
-         if (this.mineData[row + 1][col]) {res++;}
-      } else if (row == 0 && col == numCols() - 1) { // top right corner
-         if (this.mineData[row][col - 1]) {res++;}
-         if (this.mineData[row + 1][col - 1]) {res++;}
-         if (this.mineData[row + 1][col]) {res++;}
-      } else if (row == numRows() - 1 && col == 0) { // bottom left corner
-         if (this.mineData[row - 1][col]) {res++;}
-         if (this.mineData[row - 1][col + 1]) {res++;}
-         if (this.mineData[row][col + 1]) {res++;}
-      } else if (row == numRows() - 1 && col == numCols() - 1) { // bottom right corner
-         if (this.mineData[row][col - 1]) {res++;}
-         if (this.mineData[row - 1][col - 1]) {res++;}
-         if (this.mineData[row - 1][col]) {res++;}
-      } else {
-         System.out.println("This is not a corner piece!!!");
-      }
-      return res;
-   }
-
-   private boolean isMiddle(int row, int col) {
-      return row != 0 && col != 0 && col != numCols() - 1 && row != numRows() - 1;
-   }
-
-   private int countAdjacentMinesFromMiddle(int row, int col) {
-      // need to check all surrounding 8 locations
-      int res = 0;
-      if (this.mineData[row - 1][col - 1]) {res++;}
-      if (this.mineData[row - 1][col]) {res++;}
-      if (this.mineData[row - 1][col + 1]) {res++;}
-      if (this.mineData[row][col - 1]) {res++;}
-      if (this.mineData[row][col + 1]) {res++;}
-      if (this.mineData[row + 1][col - 1]) {res++;}
-      if (this.mineData[row + 1][col]) {res++;}
-      if (this.mineData[row + 1][col + 1]) {res++;}
-      return res;
-   }
-         
+ 
 }
 
