@@ -1,5 +1,5 @@
 // Name: Nitzan Saar
-// USC NetID:
+// USC NetID: 8106373693
 // CS 455 PA3
 // Fall 2024
 
@@ -238,10 +238,9 @@ public class VisibleField {
             if (mineField.hasMine(i, j)) {
                if (fieldStatus[i][j] != MINE_GUESS) {
                   fieldStatus[i][j] = MINE;
-               } else if (fieldStatus[i][j] == MINE_GUESS) {
-                  fieldStatus[i][j] = INCORRECT_GUESS;
                }
-
+            } else if (fieldStatus[i][j] == MINE_GUESS) {
+               fieldStatus[i][j] = INCORRECT_GUESS;
             }
          }
       }
