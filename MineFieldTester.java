@@ -3,7 +3,21 @@ public class MineFieldTester {
     public static MineField mineField;
     public static void main(String[] args) {
 
-        testNumAdjacentMines(mineField);
+        // Define the size of the minefield
+        int rows = 5;
+        int cols = 5;
+
+        // Create a 2D array representing the minefield
+        boolean[][] minefield = new boolean[rows][cols];
+
+        // Place mines in the field (for example purposes)
+        minefield[1][1] = true;
+        minefield[2][3] = true;
+        minefield[4][0] = true;
+        MineField mf = new MineField(minefield);
+        System.out.println(mf.toString());
+
+        // testNumAdjacentMines(mineField);
     }
 
     private static void testNumAdjacentMines(MineField mineField) {
@@ -11,7 +25,7 @@ public class MineFieldTester {
         mineField.populateMineField(0,0);
         System.out.println(mineField.toString());
         // int res = mineField.countAdjacentMinesFromMiddle(1, 1);
-        int res = mineField.numAdjacentMines(1, 9);
+        int res = mineField.numAdjacentMines(0, 0);
         System.out.println(res);
     }
 

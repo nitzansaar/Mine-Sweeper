@@ -127,19 +127,28 @@ public class VisibleField {
     */
    public void cycleGuess(int row, int col) {
       int guess = fieldStatus[row][col];
-       switch (guess) {
-           case COVERED -> {
-               fieldStatus[row][col] = MINE_GUESS;
-               minesLeft--;
-           }
-           case MINE_GUESS -> {
-               fieldStatus[row][col] = QUESTION;
-               minesLeft++;
-           }
-           case QUESTION -> fieldStatus[row][col] = COVERED;
-           default -> {
-           }
-       }
+      if (guess == COVERED) {
+         fieldStatus[row][col] = MINE_GUESS;
+         minesLeft--;
+      } else if (guess == MINE_GUESS) {
+         fieldStatus[row][col] = QUESTION;
+         minesLeft++;
+      } else if (guess == QUESTION) {
+         fieldStatus[row][col] = COVERED;
+      }
+      //  switch (guess) {
+      //      case COVERED -> {
+      //          fieldStatus[row][col] = MINE_GUESS;
+      //          minesLeft--;
+      //      }
+      //      case MINE_GUESS -> {
+      //          fieldStatus[row][col] = QUESTION;
+      //          minesLeft++;
+      //      }
+      //      case QUESTION -> fieldStatus[row][col] = COVERED;
+      //      default -> {
+      //      }
+      //  }
       checkWin();
       
    }

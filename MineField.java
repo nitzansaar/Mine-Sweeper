@@ -28,7 +28,8 @@ public class MineField {
                        and must be rectangular (i.e., every row is the same length)
     */
    public MineField(boolean[][] mineData) {
-      this.mineData = mineData;
+      this.mineData = deepCopy(mineData);
+      this.numMines = calculateNumMines(mineData);
    }
 
 
@@ -176,6 +177,26 @@ public class MineField {
 
    
    // <put private methods here>
+   // Helper method to create a deep copy of the 2D array
+   private boolean[][] deepCopy(boolean[][] original) {
+      boolean[][] copy = new boolean[original.length][];
+      for (int i = 0; i < original.length; i++) {
+         copy[i] = original[i].clone();  // Clone each row to ensure a deep copy
+      }
+      return copy;
+   }
+      // Helper method to calculate the number of mines
+   private int calculateNumMines(boolean[][] mineData) {
+      int count = 0;
+      for (boolean[] row : mineData) {
+         for (boolean cell : row) {
+            if (cell) {
+               count++;
+            }
+         }
+      }
+      return count;
+   }
   // Helper method with a visited array to avoid re-visiting cells
   private int numAdjacentMinesHelper(int row, int col, boolean[][] visited) {
    if (!inRange(row, col) || visited[row][col]) {
